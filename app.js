@@ -3,7 +3,7 @@ const sqlite3 = require("sqlite3").verbose();
 const bodyParser = require("body-parser");
 
 const app = express();
-const port = 8000;
+const port = 6666;
 
 // Middleware para parsear JSON y datos de formularios
 app.use(bodyParser.urlencoded({ extended: true }));
