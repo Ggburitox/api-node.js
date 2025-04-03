@@ -1,7 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const db = require("./database"); // Importamos la base de datos
-
+const db = require("./db.js");
 const app = express();
 const port = 6666;
 
