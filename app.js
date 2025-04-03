@@ -1,12 +1,12 @@
 const express = require("express");
-const bodyParser = require("body-parser");
 const db = require("./db.js");
+
 const app = express();
 const port = 6666;
 
 // Middleware para parsear JSON y datos de formularios
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Obtener todos los estudiantes
 app.get("/students", (req, res) => {
@@ -20,10 +20,17 @@ app.get("/students", (req, res) => {
 
 // Agregar un nuevo estudiante
 app.post("/students", (req, res) => {
+    console.log("Datos recibidos en POST /students:", req.body);
+
+    if (!req.body || Object.keys(req.body).length === 0) {
+        return res.status(400).json({ error: "❌ No se enviaron datos en la solicitud." });
+    }
+
     const { firstname, lastname, gender, age } = req.body;
     if (!firstname || !lastname || !gender) {
-        return res.status(400).json({ error: "Faltan datos requeridos (firstname, lastname, gender)" });
+        return res.status(400).json({ error: "❌ Faltan datos requeridos (firstname, lastname, gender)" });
     }
+
     const sql = "INSERT INTO students (firstname, lastname, gender, age) VALUES (?, ?, ?, ?)";
     db.run(sql, [firstname, lastname, gender, age], function (err) {
         if (err) {
@@ -49,11 +56,18 @@ app.get("/student/:id", (req, res) => {
 
 // Actualizar un estudiante por ID
 app.put("/student/:id", (req, res) => {
+    console.log("Datos recibidos en PUT /student/:id:", req.body);
+
+    if (!req.body || Object.keys(req.body).length === 0) {
+        return res.status(400).json({ error: "❌ No se enviaron datos en la solicitud." });
+    }
+
     const { id } = req.params;
     const { firstname, lastname, gender, age } = req.body;
     if (!firstname || !lastname || !gender) {
-        return res.status(400).json({ error: "Faltan datos requeridos (firstname, lastname, gender)" });
+        return res.status(400).json({ error: "❌ Faltan datos requeridos (firstname, lastname, gender)" });
     }
+
     const sql = "UPDATE students SET firstname = ?, lastname = ?, gender = ?, age = ? WHERE id = ?";
     db.run(sql, [firstname, lastname, gender, age, id], function (err) {
         if (err) {
